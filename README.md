@@ -9,12 +9,12 @@ Create a `fabfile.py` in your project directory. You can see example of a fabfil
 ```python
 from fabric.decorators import task
 from fabric.state import env
-from django_fabric.fabfile import Site
+from django_fabric.fabfile import App
 
 env.user = 'web'
 env.hosts = ['server1.example.com']
 
-site = Site(
+site = App(
     project_paths={
         'prod': '/var/www/example_site',
     },
