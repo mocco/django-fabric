@@ -20,12 +20,12 @@ class App():
         django.project(project_package)
 
     def local_management_command(self, command, *args, **kwargs):
-        local("venv/bin/python manage.py %s" % command, *args, **kwargs)
+        return local("venv/bin/python manage.py %s" % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
         code_dir = self.project_paths[instance]
         with cd(code_dir):
-            run("venv/bin/python manage.py %s" % command)
+            return run("venv/bin/python manage.py %s" % command)
 
     def test(self):
         with settings(warn_only=True):
