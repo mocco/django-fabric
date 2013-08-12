@@ -93,4 +93,4 @@ class UwsgiApp(App):
         self.ini_files = ini_files
 
     def restart_app(self, instance):
-        sudo("touch %s" % self.ini_files['instance'])
+        sudo("touch %s" % self.ini_files[instance])
