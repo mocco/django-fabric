@@ -8,7 +8,7 @@ from fabric.contrib import django
 from fabric.utils import abort
 
 
-class App():
+class App(object):
     project_paths = {}
     project_package = None
     test_settings = None
