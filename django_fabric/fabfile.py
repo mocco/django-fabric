@@ -27,7 +27,7 @@ class App():
         with cd(code_dir):
             return run("venv/bin/python manage.py %s" % command)
 
-    def test(self):
+    def test(self, is_deploying=True):
         with settings(warn_only=True):
             print(colors.yellow("Running tests, please wait!"))
             if settings is None:
@@ -39,8 +39,9 @@ class App():
 
         if result.failed:
             print(colors.red("Tests failed"))
-            if not confirm('Do you really want to deploy?'):
-                abort('')
+            if is_deploying:
+                if not confirm('Do you really want to deploy?'):
+                    abort('')
         else:
             print(colors.green("All tests ok"))
 
@@ -73,13 +74,13 @@ class App():
 
     def deploy_dev(self):
         if confirm("Do you want to run tests before deploying?"):
-            self.test()
+            self.test(is_deploying=True)
 
         self.deploy('dev')
 
     def deploy_prod(self, run_test=True):
         if run_test:
-            self.test()
+            self.test(is_deploying=True)
 
         self.deploy('prod')
 
