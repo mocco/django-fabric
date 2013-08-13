@@ -4,7 +4,9 @@ a generic fabric utility class for django projects
 
 ## Usage
 
-Create a `fabfile.py` in your project directory. You can see example of a fabfile below.
+Create a `fabfile.py` in your project directory. You can see example of a fabfile below. If you 
+run into problems with settings where fabric cannot locate settings add 
+`sys.path.append(os.path.dirname(__file__))` to your fabfile.
 
 ```python
 from fabric.decorators import task

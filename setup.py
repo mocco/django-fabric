@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='django-fabric',
-    version='1.0',
+    version='1.0.1',
     author='Rolf Erik Lekang',
     author_email='rolf@mocco.no',
     packages=find_packages(),
