@@ -14,10 +14,12 @@ class App(object):
     project_package = None
     test_settings = None
 
-    def __init__(self, project_paths, project_package, test_settings=None):
+    def __init__(self, project_paths, project_package, test_settings=None,
+                 restart_command=None):
         self.project_paths = project_paths
         self.project_package = project_package
-        self.test_settings = test_settings 
+        self.test_settings = test_settings
+        self.restart_command = restart_command
         django.project(project_package)
 
     def local_management_command(self, command, *args, **kwargs):
@@ -76,7 +78,12 @@ class App(object):
             self.run_management_command(instance, "collectstatic --noinput")
 
     def restart_app(self, instance):
-        raise NotImplementedError
+        if self.restart_command is None:
+            # If restart command is not used this method should have been
+            # overrided
+            raise NotImplementedError
+        else:
+            run(self.restart_command)
 
     def deploy(self, instance):
         self.run_server_updates(instance)
