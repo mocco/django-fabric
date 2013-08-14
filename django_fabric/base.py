@@ -75,7 +75,9 @@ class App(object):
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, "bower_install")
 
-            self.run_management_command(instance, "collectstatic --noinput")
+            if 'django.contrib.staticfiles' in settings.INSTALLED_APPS:
+                self.run_management_command(instance,
+                                            "collectstatic --noinput")
 
     def restart_app(self, instance):
         if self.restart_command is None:
