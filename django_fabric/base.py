@@ -15,7 +15,7 @@ class App(object):
     def __init__(self, project_paths, project_package, test_settings=None):
         self.project_paths = project_paths
         self.project_package = project_package
-        self.test_settings = None
+        self.test_settings = test_settings 
         django.project(project_package)
 
     def local_management_command(self, command, *args, **kwargs):
