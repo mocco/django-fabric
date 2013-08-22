@@ -22,13 +22,16 @@ class App(object):
         self.restart_command = restart_command
         django.project(project_package)
 
+    def run(self, command):
+        return run(command)
+
     def local_management_command(self, command, *args, **kwargs):
         return local("venv/bin/python manage.py %s" % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
         code_dir = self.project_paths[instance]
         with cd(code_dir):
-            return run("venv/bin/python manage.py %s" % command)
+            return self.run("venv/bin/python manage.py %s" % command)
 
     def test(self, is_deploying=True):
         with settings(warn_only=True):
@@ -54,16 +57,16 @@ class App(object):
             if confirm("virtualenv not found. Do you want to create one"):
                 print(colors.yellow("Creating virtualenv"))
                 with cd(path):
-                    run("virtualenv venv")
+                    self.run("virtualenv venv")
 
     def run_server_updates(self, instance):
         code_dir = self.project_paths[instance]
         self.check_virtualenv(code_dir)
         with cd(code_dir):
-            run("git fetch")
-            run("git reset --hard origin/master")
+            self.run("git fetch")
+            self.run("git reset --hard origin/master")
 
-            run("venv/bin/pip install -r requirements.txt")
+            self.run("venv/bin/pip install -r requirements.txt")
 
             from django.conf import settings
             if 'south' in settings.INSTALLED_APPS:
@@ -85,7 +88,7 @@ class App(object):
             # overrided
             raise NotImplementedError
         else:
-            run(self.restart_command)
+            self.run(self.restart_command)
 
     def deploy(self, instance):
         self.run_server_updates(instance)
