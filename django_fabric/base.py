@@ -102,3 +102,8 @@ class App(object):
             self.test(is_deploying=True)
 
         self.deploy('prod')
+
+    def translate(self):
+        self.local_management_command('makemessages --all')
+        if confirm('Compile messages?'):
+            self.local_management_command('compilemessages')
