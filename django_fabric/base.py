@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
 import os
+import time
+
 from fabric.api import local, run, cd
 from fabric import colors
 from fabric.context_managers import settings
@@ -7,6 +9,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib import django
 from fabric.contrib.files import exists
 from fabric.utils import abort
+from fabric.operations import get as fabric_get
 
 
 class App(object):
@@ -22,16 +25,13 @@ class App(object):
         self.restart_command = restart_command
         django.project(project_package)
 
-    def run(self, command):
-        return run(command)
-
     def local_management_command(self, command, *args, **kwargs):
         return local("venv/bin/python manage.py %s" % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
         code_dir = self.project_paths[instance]
         with cd(code_dir):
-            return self.run("venv/bin/python manage.py %s" % command)
+            return run("venv/bin/python manage.py %s" % command)
 
     def test(self, is_deploying=True):
         with settings(warn_only=True):
@@ -57,16 +57,16 @@ class App(object):
             if confirm("virtualenv not found. Do you want to create one"):
                 print(colors.yellow("Creating virtualenv"))
                 with cd(path):
-                    self.run("virtualenv venv")
+                    run("virtualenv venv")
 
     def run_server_updates(self, instance):
         code_dir = self.project_paths[instance]
         self.check_virtualenv(code_dir)
         with cd(code_dir):
-            self.run("git fetch")
-            self.run("git reset --hard origin/master")
+            run("git fetch")
+            run("git reset --hard origin/master")
 
-            self.run("venv/bin/pip install -r requirements.txt")
+            run("venv/bin/pip install -r requirements.txt")
 
             from django.conf import settings
             if 'south' in settings.INSTALLED_APPS:
@@ -88,7 +88,7 @@ class App(object):
             # overrided
             raise NotImplementedError
         else:
-            self.run(self.restart_command)
+            run(self.restart_command)
 
     def deploy(self, instance):
         self.run_server_updates(instance)
@@ -110,3 +110,26 @@ class App(object):
         self.local_management_command('makemessages --all')
         if confirm('Compile messages?'):
             self.local_management_command('compilemessages')
+
+    def clone_data(self, instance):
+        dump_file = str(time.time()) + ".json"
+
+        # Ignore errors on these next steps, so that we are sure we clean up no matter what
+        with settings(warn_only=True) and cd(self.project_paths[instance]):
+            # Dump the database to a file...
+            self.run_management_command(instance, 'dumpdata --all > ' + dump_file)
+
+            # The download that file, and all uno's uploaded files, and cleanup the dump file
+            fabric_get(self.project_paths['prod'] + dump_file, dump_file)
+            run('rm ' + dump_file)
+
+            local('python manage.py syncdb --migrate')
+            local('python manage.py flush --noinput --no-initial-data')
+            local('python manage.py loaddata ' + dump_file)
+
+        # ... then cleanup the dump file
+        local('rm ' + dump_file)
+
+    def clone_prod_data(self):
+         if confirm("All local data will be replaced with prod data, OK?"):
+            self.clone_data("prod")
