@@ -124,9 +124,9 @@ class App(object):
             get(self.project_paths[instance] + dump_file, dump_file)
             self.run('rm ' + dump_file)
 
-            local('python manage.py syncdb --migrate')
-            local('python manage.py flush --noinput --no-initial-data')
-            local('python manage.py loaddata ' + dump_file)
+            self.local_management_command('syncdb --migrate')
+            self.local_management_command('flush --noinput --no-initial-data')
+            self.local_management_command('loaddata ' + dump_file)
 
         # ... then cleanup the dump file
         local('rm ' + dump_file)
