@@ -10,6 +10,7 @@ from fabric.contrib.files import exists
 from fabric.utils import abort
 from fabric.operations import get
 
+
 class App(object):
     project_paths = {}
     project_package = None
@@ -115,12 +116,16 @@ class App(object):
     def clone_data(self, instance):
         dump_file = str(time.time()) + ".json"
 
-        # Ignore errors on these next steps, so that we are sure we clean up no matter what
+        # Ignore errors on these next steps, so that we are sure we clean up
+        # no matter what
         with settings(warn_only=True) and cd(self.project_paths[instance]):
             # Dump the database to a file...
-            self.run_management_command(instance, 'dumpdata --all > ' + dump_file)
+            self.run_management_command(
+                instance,
+                'dumpdata --all > ' + dump_file
+            )
 
-            # The download that file, and all uno's uploaded files, and cleanup the dump file
+            # The download that file, all uploaded files and rm the dump file
             get(self.project_paths[instance] + dump_file, dump_file)
             self.run('rm ' + dump_file)
 
@@ -132,5 +137,5 @@ class App(object):
         local('rm ' + dump_file)
 
     def clone_prod_data(self):
-         if confirm("All local data will be replaced with prod data, OK?"):
+        if confirm("All local data will be replaced with prod data, OK?"):
             self.clone_data("prod")
