@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 import os
+import time
 from fabric.api import local, run, cd
 from fabric import colors
 from fabric.context_managers import settings
@@ -7,7 +8,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib import django
 from fabric.contrib.files import exists
 from fabric.utils import abort
-
+from fabric.operations import get
 
 class App(object):
     project_paths = {}
@@ -110,3 +111,26 @@ class App(object):
         self.local_management_command('makemessages --all')
         if confirm('Compile messages?'):
             self.local_management_command('compilemessages')
+
+    def clone_data(self, instance):
+        dump_file = str(time.time()) + ".json"
+
+        # Ignore errors on these next steps, so that we are sure we clean up no matter what
+        with settings(warn_only=True) and cd(self.project_paths[instance]):
+            # Dump the database to a file...
+            self.run_management_command(instance, 'dumpdata --all > ' + dump_file)
+
+            # The download that file, and all uno's uploaded files, and cleanup the dump file
+            get(self.project_paths[instance] + dump_file, dump_file)
+            self.run('rm ' + dump_file)
+
+            local('python manage.py syncdb --migrate')
+            local('python manage.py flush --noinput --no-initial-data')
+            local('python manage.py loaddata ' + dump_file)
+
+        # ... then cleanup the dump file
+        local('rm ' + dump_file)
+
+    def clone_prod_data(self):
+         if confirm("All local data will be replaced with prod data, OK?"):
+            self.clone_data("prod")
