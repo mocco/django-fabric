@@ -1,10 +1,3 @@
----
-title: django-fabric 
-layout: base
-description: a generic fabric utility class for django projects
-github: django-fabric
----
-
 # django-fabric
 django-fabric is written to make writing fabfiles for django projects easier and faster.
 It contains the basic stuff one would expect from a django setup with git and virtualenv. The code
