@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 from fabric.operations import sudo
 
 from django_fabric.base import App
