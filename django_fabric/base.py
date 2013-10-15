@@ -130,7 +130,7 @@ class App(object):
             self.run('rm ' + dump_file)
 
             self.local_management_command('syncdb --migrate')
-            self.local_management_command('flush --noinput --no-initial-data')
+            self.local_management_command('flush --noinput')
             self.local_management_command('loaddata ' + dump_file)
 
         # ... then cleanup the dump file
