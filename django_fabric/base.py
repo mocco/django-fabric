@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+
 from fabric.api import local, run, cd
 from fabric import colors
 from fabric.context_managers import settings
@@ -15,13 +16,15 @@ class App(object):
     project_paths = {}
     project_package = None
     test_settings = None
+    strict = False
 
     def __init__(self, project_paths, project_package, test_settings=None,
-                 restart_command=None):
+                 restart_command=None, strict=False):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
         self.restart_command = restart_command
+        self.strict = strict
         django.project(project_package)
 
     def run(self, command):
@@ -48,6 +51,8 @@ class App(object):
         if result.failed:
             print(colors.red("Tests failed"))
             if is_deploying:
+                if self.strict:
+                    abort('')
                 if not confirm('Do you really want to deploy?'):
                     abort('')
         else:
