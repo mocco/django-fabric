@@ -22,8 +22,8 @@ class App(object):
     dumpdata_command = None
 
     def __init__(self, project_paths, project_package, test_settings=None,
-                 strict=False, restart_command=None, loaddata_command=None,
-                 dumpdata_command=None):
+                 strict=False, restart_command=None,
+                 loaddata_command='loaddata', dumpdata_command='dumpdata'):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
@@ -134,21 +134,13 @@ class App(object):
     def clone_data(self, instance):
         dump_file = "%s.json" % str(time.time())
 
-        loaddata_command = 'loaddata'
-        if not self.loaddata_command is None:
-            loaddata_command = self.loaddata_command
-
-        dumpdata_command = 'dumpdata'
-        if not self.dumpdata_command is None:
-            dumpdata_command = self.dumpdata_command
-
         # Ignore errors on these next steps, so that we are sure we clean up
         # no matter what
         with settings(warn_only=True) and cd(self.project_paths[instance]):
             # Dump the database to a file...
             self.run_management_command(
                 instance,
-                '%s --all > %s' % (dumpdata_command, dump_file)
+                '%s --all > %s' % (self.dumpdata_command, dump_file)
             )
 
             # The download that file, all uploaded files and rm the dump file
@@ -157,7 +149,7 @@ class App(object):
 
             self.syncdb('local')
 
-            self.local_management_command('%s %s' % (loaddata_command,
+            self.local_management_command('%s %s' % (self.loaddata_command,
                                                      dump_file))
 
         # ... then cleanup the dump file
