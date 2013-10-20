@@ -17,14 +17,20 @@ class App(object):
     project_package = None
     test_settings = None
     strict = False
+    restart_command = None
+    loaddata_command = None
+    dumpdata_command = None
 
     def __init__(self, project_paths, project_package, test_settings=None,
-                 restart_command=None, strict=False):
+                 strict=False, restart_command=None, loaddata_command=None,
+                 dumpdata_command=None):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
-        self.restart_command = restart_command
         self.strict = strict
+        self.restart_command = restart_command
+        self.loaddata_command = loaddata_command
+        self.dumpdata_command = dumpdata_command
         django.project(project_package)
 
     def run(self, command):
@@ -119,7 +125,15 @@ class App(object):
             self.local_management_command('compilemessages')
 
     def clone_data(self, instance):
-        dump_file = str(time.time()) + ".json"
+        dump_file = "%s.json" % str(time.time())
+
+        loaddata_command = 'loaddata'
+        if not self.loaddata_command is None:
+            loaddata_command = self.loaddata_command
+
+        dumpdata_command = 'dumpdata'
+        if not self.dumpdata_command is None:
+            dumpdata_command = self.dumpdata_command
 
         # Ignore errors on these next steps, so that we are sure we clean up
         # no matter what
@@ -127,18 +141,19 @@ class App(object):
             # Dump the database to a file...
             self.run_management_command(
                 instance,
-                'dumpdata --all > ' + dump_file
+                '%s --all > %s' % (dumpdata_command, dump_file)
             )
 
             # The download that file, all uploaded files and rm the dump file
-            get(self.project_paths[instance] + dump_file, dump_file)
-            self.run('rm ' + dump_file)
+            get("%s%s" % (self.project_paths[instance], dump_file, dump_file))
+            self.run('rm %s' % dump_file)
 
             self.local_management_command('syncdb --migrate --noinput')
-            self.local_management_command('loaddata ' + dump_file)
+            self.local_management_command('%s %s' % (loaddata_command,
+                                                     dump_file))
 
         # ... then cleanup the dump file
-        local('rm ' + dump_file)
+        local('rm %s' % dump_file)
 
     def clone_prod_data(self):
         if confirm("All local data will be replaced with prod data, OK?"):
