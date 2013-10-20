@@ -40,6 +40,9 @@ class App(object):
         return local("venv/bin/python manage.py %s" % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
+        if instance == 'local':
+            return self.local_management_command(command)
+
         code_dir = self.project_paths[instance]
         with cd(code_dir):
             return self.run("venv/bin/python manage.py %s" % command)
@@ -72,6 +75,14 @@ class App(object):
                 with cd(path):
                     self.run("virtualenv venv")
 
+    def syncdb(self, instance):
+        from django.conf import settings
+        if 'south' in settings.INSTALLED_APPS:
+            self.run_management_command(instance,
+                                        "syncdb --noinput --migrate")
+        else:
+            self.run_management_command(instance, "syncdb --noinput")
+
     def run_server_updates(self, instance):
         code_dir = self.project_paths[instance]
         self.check_virtualenv(code_dir)
@@ -81,13 +92,9 @@ class App(object):
 
             self.run("venv/bin/pip install -r requirements.txt")
 
-            from django.conf import settings
-            if 'south' in settings.INSTALLED_APPS:
-                self.run_management_command(instance,
-                                            "syncdb --noinput --migrate")
-            else:
-                self.run_management_command(instance, "syncdb --noinput")
+            self.syncdb(instance)
 
+            from django.conf import settings
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, "bower_install")
 
@@ -148,7 +155,8 @@ class App(object):
             get("%s%s" % (self.project_paths[instance], dump_file, dump_file))
             self.run('rm %s' % dump_file)
 
-            self.local_management_command('syncdb --migrate --noinput')
+            self.syncdb('local')
+
             self.local_management_command('%s %s' % (loaddata_command,
                                                      dump_file))
 
