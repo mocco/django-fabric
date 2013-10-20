@@ -144,7 +144,7 @@ class App(object):
             )
 
             # The download that file, all uploaded files and rm the dump file
-            get("%s%s" % (self.project_paths[instance], dump_file, dump_file))
+            get("%s%s" % (self.project_paths[instance], dump_file), dump_file)
             self.run('rm %s' % dump_file)
 
             self.syncdb('local')
