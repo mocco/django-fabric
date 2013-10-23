@@ -20,10 +20,15 @@ class App(object):
     restart_command = None
     loaddata_command = None
     dumpdata_command = None
+    requirements = {
+        'dev': 'requirements.txt',
+        'prod': 'requirements.txt',
+    }
 
     def __init__(self, project_paths, project_package, test_settings=None,
                  strict=False, restart_command=None,
-                 loaddata_command='loaddata', dumpdata_command='dumpdata'):
+                 loaddata_command='loaddata', dumpdata_command='dumpdata',
+                 requirements=None):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
@@ -31,6 +36,7 @@ class App(object):
         self.restart_command = restart_command
         self.loaddata_command = loaddata_command
         self.dumpdata_command = dumpdata_command
+        self.requirements = requirements or self.requirements
         django.project(project_package)
 
     def run(self, command):
@@ -90,7 +96,7 @@ class App(object):
             self.run("git fetch")
             self.run("git reset --hard origin/master")
 
-            self.run("venv/bin/pip install -r requirements.txt")
+            self.run("venv/bin/pip install -r %s" % self.requirements[instance])
 
             self.syncdb(instance)
 
