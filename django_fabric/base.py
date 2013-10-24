@@ -96,7 +96,7 @@ class App(object):
             self.run("git fetch")
             self.run("git reset --hard origin/master")
 
-            self.run("venv/bin/pip install -r %s" % self.requirements[instance])
+            self.run("venv/bin/pip install -r%s" % self.requirements[instance])
 
             self.syncdb(instance)
 
