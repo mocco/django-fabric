@@ -154,6 +154,12 @@ class App(object):
             self.run('rm %s' % dump_file)
 
             self.syncdb('local')
+            self.run_management_command(instance, 'flush --noinput')
+
+            from django.db import connection, transaction
+            cursor = connection.cursor()
+            cursor.execute("DELETE FROM django_content_type;")
+            transaction.commit_unless_managed()
 
             self.local_management_command('%s %s' % (self.loaddata_command,
                                                      dump_file))
