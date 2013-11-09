@@ -154,7 +154,7 @@ class App(object):
             self.run('rm %s' % dump_file)
 
             self.syncdb('local')
-            self.run_management_command(instance, 'flush --noinput')
+            self.local_management_command(instance, 'flush --noinput')
 
             from django.db import connection, transaction
             cursor = connection.cursor()

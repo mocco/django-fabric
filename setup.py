@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='django-fabric',
-    version='1.5.1',
+    version='1.5.2',
     author='Rolf Erik Lekang',
     author_email='rolf@mocco.no',
     url='http://mocco.no/django-fabric/',
