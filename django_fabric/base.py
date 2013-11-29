@@ -29,7 +29,7 @@ class App(object):
     def __init__(self, project_paths, project_package, test_settings=None,
                  strict=False, restart_command=None,
                  loaddata_command='loaddata', dumpdata_command='dumpdata',
-                 requirements=None,local_tables_to_flush=[]):
+                 requirements=None, local_tables_to_flush=[]):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
@@ -60,7 +60,7 @@ class App(object):
             print(colors.yellow("Running tests, please wait!"))
             if settings is None:
                 command = "test --settings=%s" % \
-                    self.test_settings
+                          self.test_settings
             else:
                 command = "test"
             result = self.local_management_command(command, capture=True)
@@ -85,6 +85,7 @@ class App(object):
 
     def syncdb(self, instance):
         from django.conf import settings
+
         if 'south' in settings.INSTALLED_APPS:
             self.run_management_command(instance,
                                         "syncdb --noinput --migrate")
@@ -103,6 +104,7 @@ class App(object):
             self.syncdb(instance)
 
             from django.conf import settings
+
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, "bower_install")
 
@@ -155,11 +157,11 @@ class App(object):
             get("%s%s" % (self.project_paths[instance], dump_file), dump_file)
             self.run('rm %s' % dump_file)
 
-
             self.syncdb('local')
             self.local_management_command('flush --noinput')
 
             from django.db import connection, transaction
+
             cursor = connection.cursor()
             cursor.execute("DELETE FROM django_content_type;")
 
