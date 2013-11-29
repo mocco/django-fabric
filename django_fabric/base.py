@@ -20,6 +20,7 @@ class App(object):
     restart_command = None
     loaddata_command = None
     dumpdata_command = None
+    local_tables_to_flush = []
     requirements = {
         'dev': 'requirements.txt',
         'prod': 'requirements.txt',
@@ -28,7 +29,7 @@ class App(object):
     def __init__(self, project_paths, project_package, test_settings=None,
                  strict=False, restart_command=None,
                  loaddata_command='loaddata', dumpdata_command='dumpdata',
-                 requirements=None):
+                 requirements=None, local_tables_to_flush=[]):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
@@ -36,6 +37,7 @@ class App(object):
         self.restart_command = restart_command
         self.loaddata_command = loaddata_command
         self.dumpdata_command = dumpdata_command
+        self.local_tables_to_flush = local_tables_to_flush
         self.requirements = requirements or self.requirements
         django.project(project_package)
 
@@ -58,7 +60,7 @@ class App(object):
             print(colors.yellow("Running tests, please wait!"))
             if settings is None:
                 command = "test --settings=%s" % \
-                    self.test_settings
+                          self.test_settings
             else:
                 command = "test"
             result = self.local_management_command(command, capture=True)
@@ -83,6 +85,7 @@ class App(object):
 
     def syncdb(self, instance):
         from django.conf import settings
+
         if 'south' in settings.INSTALLED_APPS:
             self.run_management_command(instance,
                                         "syncdb --noinput --migrate")
@@ -101,6 +104,7 @@ class App(object):
             self.syncdb(instance)
 
             from django.conf import settings
+
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, "bower_install")
 
@@ -138,7 +142,7 @@ class App(object):
             self.local_management_command('compilemessages')
 
     def clone_data(self, instance):
-        dump_file = "%s.json" % str(time.time())
+        dump_file = "%s.json" % str(int(time.time()))
 
         # Ignore errors on these next steps, so that we are sure we clean up
         # no matter what
@@ -154,13 +158,17 @@ class App(object):
             self.run('rm %s' % dump_file)
 
             self.syncdb('local')
-            self.local_management_command(instance, 'flush --noinput')
+            self.local_management_command('flush --noinput')
 
             from django.db import connection, transaction
+
             cursor = connection.cursor()
             cursor.execute("DELETE FROM django_content_type;")
-            transaction.commit_unless_managed()
 
+            for table in self.local_tables_to_flush:
+                cursor.execute("DELETE FROM %s;" % table)
+
+            transaction.commit_unless_managed()
             self.local_management_command('%s %s' % (self.loaddata_command,
                                                      dump_file))
 
