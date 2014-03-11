@@ -120,21 +120,16 @@ class App(object):
         else:
             self.run(self.restart_command)
 
-    def deploy(self, instance):
+    def deploy(self, instance=None, run_tests=True):
+        if instance is None:
+            abort(colors.red("You need to provide instance on the form "
+                             "deploy:instance"))
+        if bool(run_tests) or \
+           confirm("Do you want to run tests before deploying?"):
+                self.test(is_deploying=True)
+
         self.run_server_updates(instance)
         self.restart_app(instance)
-
-    def deploy_dev(self):
-        if confirm("Do you want to run tests before deploying?"):
-            self.test(is_deploying=True)
-
-        self.deploy('dev')
-
-    def deploy_prod(self, run_test=True):
-        if run_test:
-            self.test(is_deploying=True)
-
-        self.deploy('prod')
 
     def translate(self):
         self.local_management_command('makemessages --all')
@@ -142,6 +137,10 @@ class App(object):
             self.local_management_command('compilemessages')
 
     def clone_data(self, instance):
+        if not confirm("All local data will be replaced with "
+                       "data from %s, OK?" % instance):
+            abort()
+
         dump_file = "%s.json" % str(int(time.time()))
 
         # Ignore errors on these next steps, so that we are sure we clean up
@@ -174,7 +173,3 @@ class App(object):
 
         # ... then cleanup the dump file
         local('rm %s' % dump_file)
-
-    def clone_prod_data(self):
-        if confirm("All local data will be replaced with prod data, OK?"):
-            self.clone_data("prod")
