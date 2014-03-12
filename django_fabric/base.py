@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import time
 
 from fabric.api import local, run, cd
@@ -7,7 +6,6 @@ from fabric import colors
 from fabric.context_managers import settings
 from fabric.contrib.console import confirm
 from fabric.contrib import django
-from fabric.contrib.files import exists
 from fabric.utils import abort
 from fabric.operations import get
 
@@ -75,14 +73,6 @@ class App(object):
         else:
             print(colors.green("All tests ok"))
 
-    def check_virtualenv(self, path):
-        venv_path = os.path.join(path, "venv")
-        if not exists(venv_path):
-            if confirm("virtualenv not found. Do you want to create one"):
-                print(colors.yellow("Creating virtualenv"))
-                with cd(path):
-                    self.run("virtualenv venv")
-
     def syncdb(self, instance):
         from django.conf import settings
 
@@ -94,7 +84,6 @@ class App(object):
 
     def run_server_updates(self, instance):
         code_dir = self.project_paths[instance]
-        self.check_virtualenv(code_dir)
         with cd(code_dir):
             self.run("git fetch")
             self.run("git reset --hard origin/master")
