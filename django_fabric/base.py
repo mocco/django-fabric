@@ -3,7 +3,7 @@ import time
 
 from fabric.api import local, run, cd
 from fabric import colors
-from fabric.context_managers import settings
+from fabric.context_managers import settings, quiet
 from fabric.contrib.console import confirm
 from fabric.contrib import django
 from fabric.utils import abort
@@ -40,10 +40,15 @@ class App(object):
         django.project(project_package)
 
     def run(self, command):
-        return run(command)
+        with quiet():
+            return run(command)
+
+    def local(self, command, *args, **kwargs):
+        with quiet():
+            return local(command, *args, **kwargs)
 
     def local_management_command(self, command, *args, **kwargs):
-        return local("venv/bin/python manage.py %s" % command, *args, **kwargs)
+        return self.local("venv/bin/python manage.py %s" % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
         if instance == 'local':
@@ -52,6 +57,9 @@ class App(object):
         code_dir = self.project_paths[instance]
         with cd(code_dir):
             return self.run("venv/bin/python manage.py %s" % command)
+
+    def get_head_hash(self):
+        return self.run('git rev-parse HEAD')
 
     def test(self, is_deploying=True):
         with settings(warn_only=True):
@@ -67,9 +75,9 @@ class App(object):
             print(colors.red("Tests failed"))
             if is_deploying:
                 if self.strict:
-                    abort('')
+                    abort(colors.red('You are not allowed to deploy with broken tests'))
                 if not confirm('Do you really want to deploy?'):
-                    abort('')
+                    abort('Ok!')
         else:
             print(colors.green("All tests ok"))
 
@@ -82,13 +90,17 @@ class App(object):
         else:
             self.run_management_command(instance, "syncdb --noinput")
 
+        print(colors.green("Synced/Migrated the database"))
+
     def run_server_updates(self, instance):
         code_dir = self.project_paths[instance]
         with cd(code_dir):
             self.run("git fetch")
             self.run("git reset --hard origin/master")
+            print(colors.green('HEAD is now at %s' % (self.get_head_hash()[:6],)))
 
             self.run("venv/bin/pip install -r%s" % self.requirements[instance])
+            print(colors.green('Updated requirements'))
 
             self.syncdb(instance)
 
@@ -96,11 +108,13 @@ class App(object):
 
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, "bower_install")
+                print(colors.green("Ran bower install"))
 
             if 'django.contrib.staticfiles' in settings.INSTALLED_APPS and \
                not settings.STATIC_ROOT is None:
                 self.run_management_command(instance,
                                             "collectstatic --noinput")
+                print(colors.green("Collected static files"))
 
     def restart_app(self, instance):
         if self.restart_command is None:
@@ -123,13 +137,16 @@ class App(object):
 
     def translate(self):
         self.local_management_command('makemessages --all')
+        print(colors.green('Made translation files'))
+
         if confirm('Compile messages?'):
             self.local_management_command('compilemessages')
+            print(colors.green('Compiled translation files'))
 
     def clone_data(self, instance):
         if not confirm("All local data will be replaced with "
                        "data from %s, OK?" % instance):
-            abort()
+            abort('Ok!')
 
         dump_file = "%s.json" % str(int(time.time()))
 
@@ -161,5 +178,7 @@ class App(object):
             self.local_management_command('%s %s' % (self.loaddata_command,
                                                      dump_file))
 
+            print(colors.green('Cloned data from %s into the local database' % instance))
+
         # ... then cleanup the dump file
-        local('rm %s' % dump_file)
+        self.local('rm %s' % dump_file)
