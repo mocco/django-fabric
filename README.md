@@ -28,6 +28,9 @@ run into problems with settings where fabric cannot locate settings add
         project_paths={
             'prod': '/var/www/example_site',
         },
+        urls={
+            'prod': 'http://example.com'
+        },
         project_package='example',
         test_settings='example.settings.test',
         restart_command='project restart'

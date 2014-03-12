@@ -8,6 +8,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib import django
 from fabric.utils import abort
 from fabric.operations import get
+import requests
 
 
 class App(object):
@@ -18,6 +19,7 @@ class App(object):
     restart_command = None
     loaddata_command = None
     dumpdata_command = None
+    urls = None
     local_tables_to_flush = []
     requirements = {
         'dev': 'requirements.txt',
@@ -27,7 +29,7 @@ class App(object):
     def __init__(self, project_paths, project_package, test_settings=None,
                  strict=False, restart_command=None,
                  loaddata_command='loaddata', dumpdata_command='dumpdata',
-                 requirements=None, local_tables_to_flush=[]):
+                 requirements=None, local_tables_to_flush=[], urls=None):
         self.project_paths = project_paths
         self.project_package = project_package
         self.test_settings = test_settings
@@ -37,6 +39,7 @@ class App(object):
         self.dumpdata_command = dumpdata_command
         self.local_tables_to_flush = local_tables_to_flush
         self.requirements = requirements or self.requirements
+        self.urls = urls
         django.project(project_package)
 
     def run(self, command):
@@ -126,6 +129,22 @@ class App(object):
         else:
             self.run(self.restart_command)
 
+    def check_status(self, instance):
+        if self.urls is not None:
+            if instance in self.urls:
+                print(colors.yellow('Checking if %s is alive...' % instance))
+                response = requests.get(self.urls[instance]).status_code
+                if response != 200:
+                    print(colors.red('Sound the alarm, %s did noe respond '
+                                     'correctly(%s)' % (instance, response)))
+
+                print(colors.green('Relax already, %s returned 200' %
+                                   instance))
+                return response == 200
+            else:
+                print(colors.yellow('I have no url for %s' % instance))
+                return False
+
     def deploy(self, instance=None, run_tests=True):
         if instance is None:
             abort(colors.red('You need to provide instance on the form '
@@ -136,6 +155,7 @@ class App(object):
 
         self.run_server_updates(instance)
         self.restart_app(instance)
+        self.check_status(instance)
 
     def translate(self):
         self.local_management_command('makemessages --all')
