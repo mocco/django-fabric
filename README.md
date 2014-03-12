@@ -31,9 +31,11 @@ run into problems with settings where fabric cannot locate settings add
         urls={
             'prod': 'http://example.com'
         },
+        restart_command={
+            'prod': 'restart prod'
+        },
         project_package='example',
         test_settings='example.settings.test',
-        restart_command='project restart'
     )
 
     deploy = task(site.deploy)
@@ -42,7 +44,7 @@ run into problems with settings where fabric cannot locate settings add
 This will make you able to run `fab deploy:prod` and `fab test`.
 
 ### App-server specific usage
-There are some, or at least one at this moment, classes that have spesific restart routines. They
+There are some, or at least one at this moment, classes that have specific restart routines. They
 are listed below:
 
 * `django_fabric.uwsgi.UwsgiApp`

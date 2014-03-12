@@ -127,7 +127,7 @@ class App(object):
             # overrided
             raise NotImplementedError
         else:
-            self.run(self.restart_command)
+            self.run(self.restart_command[instance])
 
     def check_status(self, instance):
         if self.urls is not None:
