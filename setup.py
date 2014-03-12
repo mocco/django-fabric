@@ -17,5 +17,10 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
-    install_requires=['fabric', 'django', 'requests']
+    install_requires=['fabric', 'django', 'requests'],
+    entry_points={
+        'console_scripts': [
+            'django-fabric-init = django_fabric.commands:init',
+        ]
+    }
 )
