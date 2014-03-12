@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 from fabric.api import cd
@@ -8,7 +9,7 @@ from fabric.contrib.files import exists
 
 class VirtualenvMixin(object):
     """
-    A mixin that will check for a virtualenvironment at <project_path>/venv
+    A mixin that will check for a virtual environment at <project_path>/venv
     before deployment.
     """
 
@@ -18,9 +19,9 @@ class VirtualenvMixin(object):
         super(VirtualenvMixin, self).run_server_updates(instance)
 
     def check_virtualenv(self, path):
-        venv_path = os.path.join(path, "venv")
+        venv_path = os.path.join(path, 'venv')
         if not exists(venv_path):
-            if confirm("virtualenv not found. Do you want to create one"):
-                print(colors.yellow("Creating virtualenv"))
+            if confirm('virtualenv not found. Do you want to create one'):
+                print(colors.yellow('Creating virtualenv'))
                 with cd(path):
-                    self.run("virtualenv venv")
+                    self.run('virtualenv venv')
