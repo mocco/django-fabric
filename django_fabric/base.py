@@ -97,7 +97,8 @@ class App(object):
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, "bower_install")
 
-            if 'django.contrib.staticfiles' in settings.INSTALLED_APPS:
+            if 'django.contrib.staticfiles' in settings.INSTALLED_APPS and \
+               not settings.STATIC_ROOT is None:
                 self.run_management_command(instance,
                                             "collectstatic --noinput")
 
