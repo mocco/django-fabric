@@ -11,8 +11,8 @@ expects the project to have a certain structure as seen below.
 
 ## Usage
 
-Create a `fabfile.py` in your project directory. You can see example of a fabfile below. If you 
-run into problems with settings where fabric cannot locate settings add 
+Create a `fabfile.py` in your project directory. You can see example of a fabfile below. If you
+run into problems with settings where fabric cannot locate settings add
 `sys.path.append(os.path.dirname(__file__))` to your fabfile.
 
 ### Basic setup
@@ -33,11 +33,12 @@ run into problems with settings where fabric cannot locate settings add
         restart_command='project restart'
     )
 
-    deploy_dev = task(site.deploy_dev)
-    deploy_prod = task(site.deploy_prod)
+    deploy = task(site.deploy)
     test = task(site.test)
 
-### App-server spesific usage
+This will make you able to run `fab deploy:prod` and `fab test`.
+
+### App-server specific usage
 There are some, or at least one at this moment, classes that have spesific restart routines. They
 are listed below:
 
