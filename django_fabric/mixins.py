@@ -33,5 +33,5 @@ class GitNameLockMixin(object):
     as the content of the lock file
     """
 
-    def lock_value(self)
+    def lock_value(self):
         return self.local('git config user.name', capture=True)
