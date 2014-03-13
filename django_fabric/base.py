@@ -19,8 +19,8 @@ class App(object):
     test_settings = None
     strict = False
     restart_command = None
-    loaddata_command = None
-    dumpdata_command = None
+    loaddata_command = 'loaddata'
+    dumpdata_command = 'dumpdata'
     urls = None
     local_tables_to_flush = []
     requirements = {
@@ -28,20 +28,21 @@ class App(object):
         'prod': 'requirements.txt',
     }
 
-    def __init__(self, project_paths, project_package, test_settings=None,
-                 strict=False, restart_command=None,
-                 loaddata_command='loaddata', dumpdata_command='dumpdata',
+    def __init__(self, project_paths=None, project_package=None,
+                 test_settings=None, strict=False, restart_command=None,
+                 loaddata_command=None, dumpdata_command=None,
                  requirements=None, local_tables_to_flush=[], urls=None):
-        self.project_paths = project_paths
-        self.project_package = project_package
-        self.test_settings = test_settings
-        self.strict = strict
-        self.restart_command = restart_command
-        self.loaddata_command = loaddata_command
-        self.dumpdata_command = dumpdata_command
-        self.local_tables_to_flush = local_tables_to_flush
+        self.project_paths = project_paths or self.project_paths
+        self.project_package = project_package or self.project_package
+        self.test_settings = test_settings or self.test_settings
+        self.restart_command = restart_command or self.restart_command
+        self.loaddata_command = loaddata_command or self.loaddata_command
+        self.dumpdata_command = dumpdata_command or self.dumpdata_command
+        self.local_tables_to_flush = local_tables_to_flush or \
+            self.local_tables_to_flush
         self.requirements = requirements or self.requirements
-        self.urls = urls
+        self.strict = strict or self.strict
+        self.urls = urls or self.urls
         django.project(project_package)
 
     def run(self, command):
