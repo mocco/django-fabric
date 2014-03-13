@@ -29,7 +29,7 @@ class VirtualenvMixin(object):
 
 class GitNameLockMixin(object):
     """
-    A mixin that reads the gitconfig and uses the gitconfig.name
+    A mixin that reads the gitconfig and uses the gitconfig user.name
     as the content of the lock file
     """
 
