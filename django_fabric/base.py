@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import time
 
-from fabric.api import local, run, cd
-from fabric import colors
 from fabric.context_managers import settings, quiet
 from fabric.contrib.console import confirm
+from fabric.contrib.files import exists
+from fabric.api import local, run, cd
+from fabric.operations import get
 from fabric.contrib import django
 from fabric.utils import abort
-from fabric.operations import get
+from fabric import colors
+
 import requests
 
 
@@ -86,6 +88,20 @@ class App(object):
         else:
             print(colors.green('All tests ok'))
 
+    def lock_value(self):
+        return ''
+
+    def lock(self, instance):
+        with cd(self.project_paths[instance]):
+            if exists('.deploying'):
+                abort(colors.red('Deployment is locked!'))
+
+            self.run('echo %s > .deploying' % self.lock_value())
+
+    def unlock(self, instance):
+        with cd(self.project_paths[instance]):
+            self.run('rm .deploying')
+
     def syncdb(self, instance):
         from django.conf import settings
 
@@ -153,9 +169,11 @@ class App(object):
            confirm('Do you want to run tests before deploying?'):
                 self.test(is_deploying=True)
 
+        self.lock(instance)
         self.run_server_updates(instance)
         self.restart_app(instance)
         self.check_status(instance)
+        self.unlock(instance)
 
     def translate(self):
         self.local_management_command('makemessages --all')
