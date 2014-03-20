@@ -39,7 +39,7 @@ class App(object):
         self.loaddata_command = loaddata_command or self.loaddata_command
         self.dumpdata_command = dumpdata_command or self.dumpdata_command
         self.local_tables_to_flush = local_tables_to_flush or \
-            self.local_tables_to_flush
+                                     self.local_tables_to_flush
         self.requirements = requirements or self.requirements
         self.strict = strict or self.strict
         self.urls = urls or self.urls
@@ -63,8 +63,7 @@ class App(object):
         return get(*args, **kwargs)
 
     def local_management_command(self, command, *args, **kwargs):
-        return self.local('venv/bin/python manage.py %s' % command, *args,
-                          **kwargs)
+        return self.local('venv/bin/python manage.py %s' % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
         if instance == 'local':
@@ -116,8 +115,7 @@ class App(object):
         from django.conf import settings
 
         if 'south' in settings.INSTALLED_APPS:
-            self.run_management_command(instance,
-                                        'syncdb --noinput --migrate')
+            self.run_management_command(instance, 'syncdb --noinput --migrate')
         else:
             self.run_management_command(instance, 'syncdb --noinput')
 
@@ -142,9 +140,8 @@ class App(object):
                 self.notify(colors.green('Ran bower install'))
 
             if 'django.contrib.staticfiles' in settings.INSTALLED_APPS and \
-               not settings.STATIC_ROOT is None:
-                self.run_management_command(instance,
-                                            'collectstatic --noinput')
+                    not settings.STATIC_ROOT is None:
+                self.run_management_command(instance, 'collectstatic --noinput')
                 self.notify(colors.green('Collected static files'))
 
     def restart_app(self, instance):
@@ -161,11 +158,12 @@ class App(object):
                 self.notify(colors.yellow('Checking if %s is alive...' % instance))
                 response = requests.get(self.urls[instance]).status_code
                 if response != 200:
-                    self.notify(colors.red('Sound the alarm, %s did noe respond '
-                                           'correctly(%s)' % (instance, response)))
+                    self.notify(colors.red('Sound the alarm, %s did noe respond correctly(%s)' % (
+                        instance,
+                        response
+                    )))
 
-                self.notify(colors.green('Relax already, %s returned 200' %
-                                         instance))
+                self.notify(colors.green('Relax already, %s returned 200' % instance))
                 return response == 200
             else:
                 self.notify(colors.yellow('I have no url for %s' % instance))
@@ -173,11 +171,10 @@ class App(object):
 
     def deploy(self, instance=None, run_tests=True):
         if instance is None:
-            abort(colors.red('You need to provide instance on the form '
-                             'deploy:instance'))
+            abort(colors.red('You need to provide instance on the form deploy:instance'))
         if bool(run_tests) or \
-           confirm('Do you want to run tests before deploying?'):
-                self.test(is_deploying=True)
+            confirm('Do you want to run tests before deploying?'):
+            self.test(is_deploying=True)
 
         self.lock(instance)
         self.run_server_updates(instance)
@@ -225,11 +222,9 @@ class App(object):
                 cursor.execute('DELETE FROM %s;' % table)
 
             transaction.commit_unless_managed()
-            self.local_management_command('%s %s' % (self.loaddata_command,
-                                                     dump_file))
+            self.local_management_command('%s %s' % (self.loaddata_command, dump_file))
 
-            self.notify(colors.green('Cloned data from %s into the local '
-                               'database' % instance))
+            self.notify(colors.green('Cloned data from %s into the local database' % instance))
 
         # ... then cleanup the dump file
         self.local('rm %s' % dump_file)
