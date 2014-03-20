@@ -16,8 +16,10 @@ setup(
         "Natural Language :: English",
     ],
     include_package_data=True,
+    test_suite='tests.run',
     zip_safe=False,
     install_requires=['fabric', 'django', 'requests'],
+    test_requires=['fabric', 'django', 'requests'],
     entry_points={
         'console_scripts': [
             'django-fabric-init = django_fabric.commands:init',
