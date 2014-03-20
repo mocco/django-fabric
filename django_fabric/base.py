@@ -13,6 +13,8 @@ from fabric import colors
 
 import requests
 
+STATIC_FILES = 'django.contrib.staticfiles'
+
 
 class App(object):
     project_paths = {}
@@ -140,8 +142,7 @@ class App(object):
                 self.run_management_command(instance, 'bower_install')
                 self.notify(colors.green('Ran bower install'))
 
-            if 'django.contrib.staticfiles' in settings.INSTALLED_APPS and \
-                    not settings.STATIC_ROOT is None:
+            if STATIC_FILES in settings.INSTALLED_APPS and not settings.STATIC_ROOT is None:
                 self.run_management_command(instance, 'collectstatic --noinput')
                 self.notify(colors.green('Collected static files'))
 
