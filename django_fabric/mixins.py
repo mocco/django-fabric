@@ -4,7 +4,6 @@ import os
 from fabric.api import cd
 from fabric import colors
 from fabric.contrib.console import confirm
-from fabric.contrib.files import exists
 
 
 class VirtualenvMixin(object):
@@ -20,7 +19,7 @@ class VirtualenvMixin(object):
 
     def check_virtualenv(self, path):
         venv_path = os.path.join(path, 'venv')
-        if not exists(venv_path):
+        if not self.exists(venv_path):
             if confirm('virtualenv not found. Do you want to create one'):
                 print(colors.yellow('Creating virtualenv'))
                 with cd(path):
@@ -29,9 +28,9 @@ class VirtualenvMixin(object):
 
 class GitNameLockMixin(object):
     """
-    A mixin that reads the gitconfig and uses the gitconfig.name
+    A mixin that reads the gitconfig and uses the gitconfig user.name
     as the content of the lock file
     """
 
-    def lock_value(self)
+    def lock_value(self):
         return self.local('git config user.name', capture=True)

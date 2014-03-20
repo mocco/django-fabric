@@ -45,6 +45,9 @@ class App(object):
         self.urls = urls or self.urls
         django.project(project_package)
 
+    def notify(self, message):
+        print(message)
+
     def run(self, command):
         with quiet():
             return run(command)
@@ -52,6 +55,12 @@ class App(object):
     def local(self, command, *args, **kwargs):
         with quiet():
             return local(command, *args, **kwargs)
+
+    def exists(self, *args, **kwargs):
+        return exists(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return get(*args, **kwargs)
 
     def local_management_command(self, command, *args, **kwargs):
         return self.local('venv/bin/python manage.py %s' % command, *args,
@@ -70,7 +79,7 @@ class App(object):
 
     def test(self, is_deploying=True):
         with settings(warn_only=True):
-            print(colors.yellow('Running tests, please wait!'))
+            self.notify(colors.yellow('Running tests, please wait!'))
             if settings is None:
                 command = 'test --settings=%s' % \
                           self.test_settings
@@ -79,7 +88,7 @@ class App(object):
             result = self.local_management_command(command, capture=True)
 
         if result.failed:
-            print(colors.red('Tests failed'))
+            self.notify(colors.red('Tests failed'))
             if is_deploying:
                 if self.strict:
                     abort(colors.red('You are not allowed to deploy with '
@@ -87,14 +96,14 @@ class App(object):
                 if not confirm('Do you really want to deploy?'):
                     abort('Ok!')
         else:
-            print(colors.green('All tests ok'))
+            self.notify(colors.green('All tests ok'))
 
     def lock_value(self):
         return ''
 
     def lock(self, instance):
         with cd(self.project_paths[instance]):
-            if exists('.deploying'):
+            if self.exists('.deploying'):
                 abort(colors.red('Deployment is locked!'))
 
             self.run('echo %s > .deploying' % self.lock_value())
@@ -112,17 +121,17 @@ class App(object):
         else:
             self.run_management_command(instance, 'syncdb --noinput')
 
-        print(colors.green('Synced/Migrated the database'))
+        self.notify(colors.green('Synced/Migrated the database'))
 
     def run_server_updates(self, instance):
         code_dir = self.project_paths[instance]
         with cd(code_dir):
             self.run('git fetch')
             self.run('git reset --hard origin/master')
-            print(colors.green('HEAD is now at %s' % self.get_head_hash()[:6]))
+            self.notify(colors.green('HEAD is now at %s' % self.get_head_hash()[:6]))
 
             self.run('venv/bin/pip install -r%s' % self.requirements[instance])
-            print(colors.green('Updated requirements'))
+            self.notify(colors.green('Updated requirements'))
 
             self.syncdb(instance)
 
@@ -130,13 +139,13 @@ class App(object):
 
             if 'djangobower' in settings.INSTALLED_APPS:
                 self.run_management_command(instance, 'bower_install')
-                print(colors.green('Ran bower install'))
+                self.notify(colors.green('Ran bower install'))
 
             if 'django.contrib.staticfiles' in settings.INSTALLED_APPS and \
                not settings.STATIC_ROOT is None:
                 self.run_management_command(instance,
                                             'collectstatic --noinput')
-                print(colors.green('Collected static files'))
+                self.notify(colors.green('Collected static files'))
 
     def restart_app(self, instance):
         if self.restart_command is None:
@@ -149,17 +158,17 @@ class App(object):
     def check_status(self, instance):
         if self.urls is not None:
             if instance in self.urls:
-                print(colors.yellow('Checking if %s is alive...' % instance))
+                self.notify(colors.yellow('Checking if %s is alive...' % instance))
                 response = requests.get(self.urls[instance]).status_code
                 if response != 200:
-                    print(colors.red('Sound the alarm, %s did noe respond '
-                                     'correctly(%s)' % (instance, response)))
+                    self.notify(colors.red('Sound the alarm, %s did noe respond '
+                                           'correctly(%s)' % (instance, response)))
 
-                print(colors.green('Relax already, %s returned 200' %
-                                   instance))
+                self.notify(colors.green('Relax already, %s returned 200' %
+                                         instance))
                 return response == 200
             else:
-                print(colors.yellow('I have no url for %s' % instance))
+                self.notify(colors.yellow('I have no url for %s' % instance))
                 return False
 
     def deploy(self, instance=None, run_tests=True):
@@ -178,11 +187,11 @@ class App(object):
 
     def translate(self):
         self.local_management_command('makemessages --all')
-        print(colors.green('Made translation files'))
+        self.notify(colors.green('Made translation files'))
 
         if confirm('Compile messages?'):
             self.local_management_command('compilemessages')
-            print(colors.green('Compiled translation files'))
+            self.notify(colors.green('Compiled translation files'))
 
     def clone_data(self, instance):
         if not confirm('All local data will be replaced with '
@@ -219,7 +228,7 @@ class App(object):
             self.local_management_command('%s %s' % (self.loaddata_command,
                                                      dump_file))
 
-            print(colors.green('Cloned data from %s into the local '
+            self.notify(colors.green('Cloned data from %s into the local '
                                'database' % instance))
 
         # ... then cleanup the dump file
