@@ -38,8 +38,7 @@ class App(object):
         self.restart_command = restart_command or self.restart_command
         self.loaddata_command = loaddata_command or self.loaddata_command
         self.dumpdata_command = dumpdata_command or self.dumpdata_command
-        self.local_tables_to_flush = local_tables_to_flush or \
-                                     self.local_tables_to_flush
+        self.local_tables_to_flush = local_tables_to_flush or self.local_tables_to_flush
         self.requirements = requirements or self.requirements
         self.strict = strict or self.strict
         self.urls = urls or self.urls
@@ -172,8 +171,7 @@ class App(object):
     def deploy(self, instance=None, run_tests=True):
         if instance is None:
             abort(colors.red('You need to provide instance on the form deploy:instance'))
-        if bool(run_tests) or \
-            confirm('Do you want to run tests before deploying?'):
+        if bool(run_tests) or confirm('Do you want to run tests before deploying?'):
             self.test(is_deploying=True)
 
         self.lock(instance)
