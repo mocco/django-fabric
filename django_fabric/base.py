@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import time
+import django
 
 from fabric.context_managers import settings, quiet
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists
 from fabric.api import local, run, cd
 from fabric.operations import get
-from fabric.contrib import django
+from fabric.contrib import django as fab_django
 from fabric.utils import abort
 from fabric import colors
 
@@ -42,7 +43,7 @@ class App(object):
         self.requirements = requirements or self.requirements
         self.strict = strict or self.strict
         self.urls = urls or self.urls
-        django.project(project_package)
+        fab_django.project(project_package)
 
     def notify(self, message):
         print(message)
@@ -112,8 +113,9 @@ class App(object):
 
     def syncdb(self, instance):
         from django.conf import settings
-
-        if 'south' in settings.INSTALLED_APPS:
+        if django.VERSION >= (1, 7):
+            self.run_management_command(instance, 'migrate --noinput')
+        elif 'south' in settings.INSTALLED_APPS:
             self.run_management_command(instance, 'syncdb --noinput --migrate')
         else:
             self.run_management_command(instance, 'syncdb --noinput')
