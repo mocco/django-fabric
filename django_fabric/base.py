@@ -30,6 +30,7 @@ class App(object):
         'dev': 'requirements.txt',
         'prod': 'requirements.txt',
     }
+    status_code = None
 
     def __init__(self, project_paths=None, project_package=None,
                  test_settings=None, strict=False, restart_command=None,
@@ -159,6 +160,7 @@ class App(object):
             if instance in self.urls:
                 self.notify(colors.yellow('Checking if %s is alive...' % instance))
                 response = requests.get(self.urls[instance]).status_code
+                self.status_code = response
                 if response != 200:
                     self.notify(colors.red('Sound the alarm, %s did noe respond correctly(%s)' % (
                         instance,
