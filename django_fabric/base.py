@@ -46,7 +46,7 @@ class App(object):
         self.requirements = requirements or self.requirements
         self.strict = strict or self.strict
         self.urls = urls or self.urls
-        fab_django.project(project_package)
+        fab_django.project(self.project_package)
 
     def notify(self, message):
         print(message)
