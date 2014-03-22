@@ -24,13 +24,3 @@ class VirtualenvMixin(object):
                 print(colors.yellow('Creating virtualenv'))
                 with cd(path):
                     self.run('virtualenv venv')
-
-
-class GitNameLockMixin(object):
-    """
-    A mixin that reads the gitconfig and uses the gitconfig user.name
-    as the content of the lock file
-    """
-
-    def lock_value(self):
-        return self.local('git config user.name', capture=True)

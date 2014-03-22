@@ -101,7 +101,7 @@ class App(object):
             self.notify(colors.green('All tests ok'))
 
     def lock_value(self):
-        return ''
+        return self.local('git config user.name', capture=True)
 
     def lock(self, instance):
         with cd(self.project_paths[instance]):
