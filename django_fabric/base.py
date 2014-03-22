@@ -106,7 +106,13 @@ class App(object):
     def lock(self, instance):
         with cd(self.project_paths[instance]):
             if self.exists('.deploying'):
-                abort(colors.red('Deployment is locked!'))
+                locker = self.run('cat .deploying')
+                if self.lock_value() != '' and locker == self.lock_value():
+                    if not confirm(colors.red('Deployment is locked by yourself! '
+                                              'Do you want to continue?')):
+                        abort(colors.red('Deployment is locked!'))
+                else:
+                    abort(colors.red('Deployment is locked by %s!' % locker))
 
             self.run('echo %s > .deploying' % self.lock_value())
 
