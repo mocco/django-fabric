@@ -186,10 +186,14 @@ class App(object):
             self.test(is_deploying=True)
 
         self.lock(instance)
+        if hasattr(self, 'pre_deploy_notify'):
+            self.pre_deploy_notify(instance)
         self.run_server_updates(instance)
         self.restart_app(instance)
         self.check_status(instance)
         self.unlock(instance)
+        if hasattr(self, 'post_deploy_notify'):
+            self.post_deploy_notify(instance)
 
     def translate(self):
         self.local_management_command('makemessages --all')
