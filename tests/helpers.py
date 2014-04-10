@@ -20,3 +20,9 @@ class TestApp(TestMixin, App):
     def notify(self, message):
         with open(self.test_log, 'a') as log_file:
             log_file.write(message + '\n')
+
+    def lock_value(self):
+        """
+        Override this to make the expected fixtures work for several people
+        """
+        return ''
