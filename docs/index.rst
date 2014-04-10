@@ -5,5 +5,11 @@
 
 Welcome to django-fabric's documentation!
 =========================================
+.. toctree::
+   :maxdepth: 1
+
+   quickstart
+   testing
+   notifications
 
 .. include:: quickstart.rst
