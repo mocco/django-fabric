@@ -149,7 +149,7 @@ class App(object):
                 self.run_management_command(instance, 'bower_install')
                 self.notify(colors.green('Ran bower install'))
 
-            if STATIC_FILES in settings.INSTALLED_APPS and not settings.STATIC_ROOT is None:
+            if STATIC_FILES in settings.INSTALLED_APPS and settings.STATIC_ROOT is not None:
                 self.run_management_command(instance, 'collectstatic --noinput')
                 self.notify(colors.green('Collected static files'))
 

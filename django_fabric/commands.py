@@ -70,20 +70,20 @@ def init():
             )
 
         urls = ',\n    '.join(
-            ["\'%s\': \'%s\'" % (instance, path)
-             for instance, path in settings['_urls'].items()]
+            ["\'%s\': \'%s\'" % (key, path)
+             for key, path in settings['_urls'].items()]
         )
 
         settings['urls'] = "urls={\n        %s\n    }," % urls
 
     settings['project_paths'] = ',\n    '.join(
-        ["\'%s\': \'%s\'" % (instance, path)
-         for instance, path in settings['_project_paths'].items()]
+        ["\'%s\': \'%s\'" % (key, path)
+         for key, path in settings['_project_paths'].items()]
     )
 
     settings['restart_commands'] = ',\n    '.join(
-        ["\'%s\': \'%s\'" % (instance, cmd)
-         for instance, cmd in settings['_restart_commands'].items()]
+        ["\'%s\': \'%s\'" % (key, cmd)
+         for key, cmd in settings['_restart_commands'].items()]
     )
 
     with open('fabfile.py', 'w') as f:
