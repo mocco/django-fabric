@@ -13,7 +13,7 @@ you with the given service.
 
 .. class:: SlackNotifyMixin
 
-    Requires to set the attribute URL.
+    A mixin that notifies a channel on the `Slack <http://slack.com/>`_. Requires to set the attribute URL.
 
     .. attribute:: CHANNEL
 
@@ -27,7 +27,8 @@ you with the given service.
 
     .. attribute:: URL
 
-        The Slack POST URL. Can be found at http://slack.com/services/new/incoming-webhook.
+        The Slack POST URL. Can be found at `slack.com/services/new/incoming-webhook
+        <http://slack.com/services/new/incoming-webhook>`_.
 
 Build your own notification mixin
 ---------------------------------
