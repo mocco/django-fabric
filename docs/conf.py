@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-fabric'
-copyright = u'2014, Rolf Erik Lekang'
+copyright = u'2014, mocco'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -268,8 +268,8 @@ texinfo_documents = [
 # Bibliographic Dublin Core info.
 epub_title = u'django-fabric'
 epub_author = u'Rolf Erik Lekang'
-epub_publisher = u'Rolf Erik Lekang'
-epub_copyright = u'2014, Rolf Erik Lekang'
+epub_publisher = u'mocco'
+epub_copyright = u'2014, mocco'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'django-fabric'
