@@ -1,10 +1,15 @@
 # -*- coding: utf8 -*-
+import re
 import json
-from fabric import colors
+import time
+import socket
 import requests
+from fabric import colors
 
 
 class Notifier(object):
+    NICK = 'django-fabric'
+
     def message_payload(self):
         return {}
 
@@ -25,14 +30,48 @@ class Notifier(object):
         raise NotImplemented
 
 
+class IrcNotifyMixin(Notifier):
+    SERVER = 'irc.freenode.org'
+    PORT = 6667
+    ROOMS = []
+    TIMEOUT = 25
+
+    def post_deploy_notify(self, instance):
+        pass
+
+    def send_notification(self, message):
+        irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        irc.settimeout(self.TIMEOUT)
+        irc.connect((self.SERVER, self.PORT))
+        irc.send("USER %s %s %s :django-fabric\n" % ((self.NICK,) * 3))
+        irc.send("NICK %s\n" % self.NICK)
+        start = time.time()
+        while (time.time() - start) < self.TIMEOUT:
+            irc_message = irc.recv(2048).strip('\n\r')
+            pong = re.compile(r'^PING\s*:\s*(.*)$').findall(irc_message)
+
+            if pong:
+                irc.send("PONG %s\n" % pong)
+
+            if re.findall(' 00[1-4] %s' % self.NICK, irc_message):
+                for room in self.ROOMS:
+                    irc.send("JOIN %s\n" % room)
+                    irc.send("PRIVMSG %s :%s\n" % (room, message))
+                    irc.send("PART %s\n" % room)
+
+                break
+
+        irc.send("QUIT\n")
+        irc.close()
+
+
 class SlackNotifyMixin(Notifier):
     CHANNEL = '#general'
-    USER_NAME = 'django-fabric'
 
     def send_notification(self, message):
         payload = {
             'channel': self.CHANNEL,
-            'username': self.USER_NAME,
+            'username': self.NICK,
             'text': message
         }
         if getattr(self, 'ICON', None) is not None:

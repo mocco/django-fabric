@@ -11,23 +11,53 @@ There are some built in mixins. To use them add them to your class in your fabfi
 add the attributes necessary. They should have defaults for values that are not used to authenticate
 you with the given service.
 
+.. class:: IrcNotifyMixin
+
+    A mixin that notifies given channels on irc.
+
+    .. attribute:: SERVER
+        Default: 'irc.freenode.org'
+
+        The irc server you want to connect to.
+
+    .. attribute:: PORT
+        Default: 6667
+
+        The port of the irc server.
+
+    .. attribute:: NICK
+        Default: 'django-fabric'
+
+        The nick that should appear on irc when the notification is sent.
+
+    .. attribute:: ROOMS
+        Default: []
+
+        List of rooms to notify, should be a list of strings.
+
+    .. attribute:: TIMEOUT
+        Default: 25
+
+        The time in seconds before the irc connection times out.
+
+
 .. class:: SlackNotifyMixin
 
     A mixin that notifies a channel on the `Slack <http://slack.com/>`_. Requires to set the attribute URL.
 
     .. attribute:: CHANNEL
-
         Default: '#general'
+
         The channel to post the notification in.
 
-    .. attribute:: USER_NAME
-
+    .. attribute:: NICK
         Default: 'django-fabric'
+
         The nick that should appear in Slack when the notification is sent.
 
     .. attribute:: URL
-
         The Slack POST URL. Can be found at `slack.com/services/new/incoming-webhook
+
         <http://slack.com/services/new/incoming-webhook>`_.
 
 Build your own notification mixin
@@ -39,8 +69,6 @@ Remember you must at least override :ref:`send_notification`. If you think your 
 mixin can be useful for others a pull-request is appreciated.
 
 .. class:: Notifier
-
-    .. method:: message_payload(self):
 
     .. method:: notification_message_context(self, instance):
 
