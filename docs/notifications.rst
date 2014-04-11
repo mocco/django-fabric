@@ -56,8 +56,8 @@ you with the given service.
         The nick that should appear in Slack when the notification is sent.
 
     .. attribute:: URL
-        The Slack POST URL. Can be found at `slack.com/services/new/incoming-webhook
 
+        The Slack POST URL. Can be found at `slack.com/services/new/incoming-webhook
         <http://slack.com/services/new/incoming-webhook>`_.
 
 
