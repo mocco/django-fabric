@@ -1,4 +1,7 @@
 from setuptools import find_packages, setup
+with open('docs/quickstart.rst', 'r') as f:
+    QUICKSTART = f.read()
+
 
 setup(
     name='django-fabric',
@@ -8,6 +11,7 @@ setup(
     url='http://mocco.no/django-fabric/',
     packages=find_packages(),
     description='a generic fabric utility class for django projects',
+    long_description=QUICKSTART,
     classifiers=[
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
