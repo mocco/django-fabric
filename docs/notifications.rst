@@ -60,6 +60,27 @@ you with the given service.
 
         <http://slack.com/services/new/incoming-webhook>`_.
 
+
+
+.. class:: HipChatNotifyMixin
+
+    A mixin that notifies a room on `HipChat <http://hipchat.com/>`_. Requires to set the attribute ROOM and HIPCHAT_TOKEN.
+
+    .. attribute:: ROOM
+
+        The room to post the notification in.
+
+    .. attribute:: NOTIFY
+        Default: False
+
+        Whether or not this message should trigger a notification for people in the room (change the tab color, play a sound, etc).
+
+    .. attribute:: COLOR
+        Default: 'yellow'
+
+        Background color for message.
+        Valid values: yellow, red, green, purple, gray, random
+
 Build your own notification mixin
 ---------------------------------
 If we do not support your chat service, bot or whatever you want to notify it should not be

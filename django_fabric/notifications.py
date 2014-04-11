@@ -79,3 +79,22 @@ class SlackNotifyMixin(Notifier):
             data = {'payload': json.dumps(payload)}
             if requests.post(self.URL, data=data).status_code != requests.codes.ok:
                 print(colors.yellow('Could not notify Slack'))
+
+
+class HipChatNotifyMixin(Notifier):
+    URL = 'https://api.hipchat.com/v2/room/%s/notification?auth_token=%s'
+    COLOR = 'yellow'
+    NOTIFY = False
+
+    def send_notification(self, message):
+        payload = {
+            'message': message,
+            'color': self.COLOR,
+            'notify': self.NOTIFY
+        }
+        url = self.URL % (self.ROOM, self.HIPCHAT_TOKEN)
+        data = {'payload': json.dumps(payload)}
+
+        if requests.post(url, data=data).status_code != requests.codes.ok:
+            print(colors.yellow('Could not notify HipChat'))
+
