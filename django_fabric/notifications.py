@@ -74,11 +74,9 @@ class SlackNotifyMixin(Notifier):
             'username': self.NICK,
             'text': message
         }
-        if getattr(self, 'ICON', None) is not None:
-            payload['icon_emoji'] = ':ghost:'
-            data = {'payload': json.dumps(payload)}
-            if requests.post(self.URL, data=data).status_code != requests.codes.ok:
-                print(colors.yellow('Could not notify Slack'))
+        data = {'payload': json.dumps(payload)}
+        if requests.post(self.URL, data=data).status_code != requests.codes.ok:
+            print(colors.yellow('Could not notify Slack'))
 
 
 class HipChatNotifyMixin(Notifier):
