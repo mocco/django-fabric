@@ -31,11 +31,11 @@ class App(object):
         'prod': 'requirements.txt',
     }
     status_code = None
+    virtualenv_activate = 'source venv/bin/activate'
 
-    def __init__(self, project_paths=None, project_package=None,
-                 test_settings=None, strict=False, restart_command=None,
-                 loaddata_command=None, dumpdata_command=None,
-                 requirements=None, local_tables_to_flush=[], urls=None):
+    def __init__(self, project_paths=None, project_package=None, test_settings=None, strict=False,
+                 restart_command=None, loaddata_command=None, dumpdata_command=None,
+                 requirements=None, local_tables_to_flush=[], urls=None, virtualenv_activate=None):
         self.project_paths = project_paths or self.project_paths
         self.project_package = project_package or self.project_package
         self.test_settings = test_settings or self.test_settings
@@ -46,6 +46,7 @@ class App(object):
         self.requirements = requirements or self.requirements
         self.strict = strict or self.strict
         self.urls = urls or self.urls
+        self.virtualenv_activate = virtualenv_activate or self.virtualenv_activate
         fab_django.project(self.project_package)
 
     def notify(self, message):
@@ -74,7 +75,7 @@ class App(object):
 
         code_dir = self.project_paths[instance]
         with cd(code_dir):
-            return self.run('venv/bin/python manage.py %s' % command)
+            return self.run('%s && python manage.py %s' % (self.virtualenv_activate, command))
 
     def get_head_hash(self):
         return self.run('git rev-parse HEAD')
@@ -138,7 +139,8 @@ class App(object):
             self.run('git reset --hard origin/master')
             self.notify(colors.green('HEAD is now at %s' % self.get_head_hash()[:6]))
 
-            self.run('venv/bin/pip install -r%s' % self.requirements[instance])
+            self.run('%s && pip install -r%s' % (self.virtualenv_activate,
+                                                 self.requirements[instance]))
             self.notify(colors.green('Updated requirements'))
 
             self.syncdb(instance)

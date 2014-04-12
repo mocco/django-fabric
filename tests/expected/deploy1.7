@@ -1,5 +1,5 @@
 [33mRunning tests, please wait![0m
-[36mlocal(venv/bin/python manage.py test)[0m
+[36mlocal(python manage.py test)[0m
 [32mAll tests ok[0m
 [36mexists(('.deploying',), {})[0m
 [36mrun(echo  > .deploying)[0m
@@ -7,9 +7,9 @@
 [36mrun(git reset --hard origin/master)[0m
 [36mrun(git rev-parse HEAD)[0m
 [32mHEAD is now at run ou[0m
-[36mrun(venv/bin/pip install -rrequirements.txt)[0m
+[36mrun(source venv/bin/activate && pip install -rrequirements.txt)[0m
 [32mUpdated requirements[0m
-[36mrun(venv/bin/python manage.py migrate --noinput)[0m
+[36mrun(source venv/bin/activate && python manage.py migrate --noinput)[0m
 [32mSynced/Migrated the database[0m
 [36mrun(restart prod)[0m
 [36mrun(rm .deploying)[0m
