@@ -95,4 +95,3 @@ class HipChatNotifyMixin(Notifier):
 
         if requests.post(url, data=data).status_code != requests.codes.ok:
             print(colors.yellow('Could not notify HipChat'))
-
