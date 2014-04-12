@@ -1,6 +1,7 @@
 import unittest
 import os
 import django
+from django.test.utils import override_settings
 
 from .helpers import TestApp
 
@@ -13,11 +14,19 @@ class TestBaseClass(unittest.TestCase):
     def tearDown(self):
         os.remove(self.log_file_name)
 
-    def test_deploy(self):
-        expected_filename = 'tests/expected/deploy'
+    def assertOutput(self, expected_filename):
         if django.VERSION >= (1, 7):
             expected_filename += '1.7'
-        self.fab.deploy('prod')
+
         with open(self.log_file_name, 'r') as output:
             with open(expected_filename, 'r') as expected:
                 self.assertEqual(output.readlines(), expected.readlines())
+
+    def test_deploy(self):
+        self.fab.deploy('prod')
+        self.assertOutput('tests/expected/deploy')
+
+    @override_settings(STATIC_ROOT=None)
+    def test_empty_static_root(self):
+        self.fab.deploy('prod')
+        self.assertOutput('tests/expected/no_static_root')

@@ -9,9 +9,7 @@
 [32mHEAD is now at run ou[0m
 [36mrun(source venv/bin/activate && pip install -rrequirements.txt)[0m
 [32mUpdated requirements[0m
-[36mrun(source venv/bin/activate && python manage.py migrate --noinput)[0m
+[36mrun(source venv/bin/activate && python manage.py syncdb --noinput --migrate)[0m
 [32mSynced/Migrated the database[0m
-[36mrun(source venv/bin/activate && python manage.py collectstatic --noinput)[0m
-[32mCollected static files[0m
 [36mrun(restart prod)[0m
 [36mrun(rm .deploying)[0m

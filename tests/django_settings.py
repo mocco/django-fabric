@@ -4,3 +4,5 @@ INSTALLED_APPS = (
 )
 
 SECRET_KEY = 'Can not be empty'
+
+STATIC_ROOT = 'static'
