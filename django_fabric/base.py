@@ -66,7 +66,7 @@ class App(object):
         return get(*args, **kwargs)
 
     def local_management_command(self, command, *args, **kwargs):
-        return self.local('venv/bin/python manage.py %s' % command, *args, **kwargs)
+        return self.local('python manage.py %s' % command, *args, **kwargs)
 
     def run_management_command(self, instance, command):
         if instance == 'local':
