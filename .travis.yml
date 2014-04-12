@@ -8,4 +8,4 @@ install:
 
 script:
   - flake8
-  - python setup.py test
+  - DJANGO_SETTINGS_MODULE='tests.django_settings' python setup.py test
