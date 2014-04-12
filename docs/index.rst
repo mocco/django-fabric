@@ -5,6 +5,9 @@
 
 Welcome to django-fabric's documentation!
 =========================================
+.. image:: https://travis-ci.org/mocco/django-fabric.svg?branch=master
+   :target: https://travis-ci.org/mocco/django-fabric
+
 .. toctree::
    :maxdepth: 1
 

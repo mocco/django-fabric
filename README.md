@@ -1,4 +1,6 @@
 # django-fabric
+[![Build Status](https://travis-ci.org/mocco/django-fabric.svg?branch=master)](https://travis-ci.org/mocco/django-fabric)
+
 django-fabric is written to make writing fabfiles for django projects easier and faster.
 It contains the basic stuff one would expect from a django setup with git and virtualenv. The code
 expects the project to have a certain structure as seen below.
