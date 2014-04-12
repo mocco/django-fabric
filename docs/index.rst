@@ -11,5 +11,6 @@ Welcome to django-fabric's documentation!
    quickstart
    testing
    notifications
+   advanced-usage
 
 .. include:: quickstart.rst
