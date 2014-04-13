@@ -5,10 +5,10 @@ with open('docs/quickstart.rst', 'r') as f:
 
 setup(
     name='django-fabric',
-    version='1.5.3',
+    version='2.0.0',
     author='Rolf Erik Lekang',
     author_email='rolf@mocco.no',
-    url='http://mocco.no/django-fabric/',
+    url='https://github.com/mocco/django-fabric',
     packages=find_packages(),
     description='a generic fabric utility class for django projects',
     long_description=QUICKSTART,
