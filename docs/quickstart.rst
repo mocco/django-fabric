@@ -3,7 +3,9 @@ Quickstart
 django-fabric is written to make writing fabfiles for django projects easier and faster.
 It contains the basic stuff one would expect from a django setup with git and virtualenv. The code
 expects the project to have a certain structure as seen below. It is possible to customize the
-activation of the virtualenvironment.::
+activation of the virtualenvironment.
+.. code-block::
+
     project-dir/
       venv/ # virtualenv
       project-package/
@@ -23,7 +25,8 @@ Init script
 ~~~~~~~~~~~
 There is a init script that will guide you through the generation of a basic fabfile
 that utilises django-fabric. Run it with the command
-::
+.. code-block::
+
     django-fabric-init
 
 Basic manual setup
@@ -34,7 +37,8 @@ run into problems with settings where fabric cannot locate settings add
 
 
 Here is an example of an fabfile
-::
+.. code-block::
+
     from fabric.decorators import task
     from fabric.state import env
     from django_fabric import App
