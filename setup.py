@@ -1,11 +1,15 @@
 from setuptools import find_packages, setup
-with open('docs/quickstart.rst', 'r') as f:
-    QUICKSTART = f.read()
+
+try:
+    with open('docs/quickstart.rst', 'r') as f:
+            QUICKSTART = f.read()
+except IOError:
+    QUICKSTART = ''
 
 
 setup(
     name='django-fabric',
-    version='2.0.0',
+    version='2.0.1',
     author='Rolf Erik Lekang',
     author_email='rolf@mocco.no',
     url='https://github.com/mocco/django-fabric',
