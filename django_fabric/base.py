@@ -230,13 +230,13 @@ class App(object):
 
             from django.db import connection, transaction
 
-            cursor = connection.cursor()
-            cursor.execute('DELETE FROM django_content_type;')
+            with transaction.atomic():
+                cursor = connection.cursor()
+                cursor.execute('DELETE FROM django_content_type;')
 
-            for table in self.local_tables_to_flush:
-                cursor.execute('DELETE FROM %s;' % table)
+                for table in self.local_tables_to_flush:
+                    cursor.execute('DELETE FROM %s;' % table)
 
-            transaction.commit_unless_managed()
             self.local_management_command('%s %s' % (self.loaddata_command, dump_file))
 
             self.notify(colors.green('Cloned data from %s into the local database' % instance))
