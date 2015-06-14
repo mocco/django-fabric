@@ -1,8 +1,9 @@
 # -*- coding: utf8 -*-
-import re
 import json
-import time
+import re
 import socket
+import time
+
 import requests
 from fabric import colors
 

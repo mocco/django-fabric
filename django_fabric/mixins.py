@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 
-from fabric.api import cd
 from fabric import colors
+from fabric.api import cd
 from fabric.contrib.console import confirm
 
 
