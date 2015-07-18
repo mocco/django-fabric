@@ -30,7 +30,7 @@ class App(object):
         'dev': 'requirements.txt',
         'prod': 'requirements.txt',
     }
-    status_code = None
+    status_code = 200
     virtualenv_activate = 'source venv/bin/activate'
 
     def __init__(self, project_paths=None, project_package=None, test_settings=None, strict=False,
@@ -168,15 +168,14 @@ class App(object):
             if instance in self.urls:
                 self.notify(colors.yellow('Checking if %s is alive...' % instance))
                 response = requests.get(self.urls[instance]).status_code
-                self.status_code = response
-                if response != 200:
+                if response != self.status_code:
                     self.notify(colors.red('Sound the alarm, %s did noe respond correctly(%s)' % (
                         instance,
                         response
                     )))
 
-                self.notify(colors.green('Relax already, %s returned 200' % instance))
-                return response == 200
+                self.notify(colors.green('Relax already, %s returned %s' % (instance, response)))
+                return response == self.status_code
             else:
                 self.notify(colors.yellow('I have no url for %s' % instance))
                 return False
