@@ -233,6 +233,7 @@ class App(object):
             with transaction.atomic():
                 cursor = connection.cursor()
                 cursor.execute('DELETE FROM django_content_type;')
+                cursor.execute('DELETE FROM auth_permission;')
 
                 for table in self.local_tables_to_flush:
                     cursor.execute('DELETE FROM %s;' % table)
