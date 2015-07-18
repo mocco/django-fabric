@@ -9,7 +9,7 @@ except IOError:
 
 setup(
     name='django-fabric',
-    version='2.0.2',
+    version='2.1.0',
     author='Rolf Erik Lekang',
     author_email='rolf@mocco.no',
     url='https://github.com/mocco/django-fabric',
