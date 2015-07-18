@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 import time
-import django
 
-from fabric.context_managers import settings, quiet
+import django
+import requests
+from fabric import colors
+from fabric.api import cd, local, run
+from fabric.context_managers import quiet, settings
+from fabric.contrib import django as fab_django
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists
-from fabric.api import local, run, cd
 from fabric.operations import get
-from fabric.contrib import django as fab_django
 from fabric.utils import abort
-from fabric import colors
-
-import requests
 
 STATIC_FILES = 'django.contrib.staticfiles'
 
